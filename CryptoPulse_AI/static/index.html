@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CryptoPulse AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: #07111f;
+            color: #f5f7fb;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background: #0b1728;
+            border-right: 1px solid #1b2a3d;
+            padding: 24px 18px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00e5ff, #635bff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo-text span {
+            color: #00e5ff;
+        }
+
+        .nav-title {
+            color: #718096;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 20px 10px 10px;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #a9b5c6;
+            margin-bottom: 6px;
+            cursor: pointer;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            background: #12253c;
+            color: white;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 28px;
+        }
+
+        .page-title h1 {
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+
+        .page-title p {
+            color: #8392a7;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button,
+        .search-box {
+            border: 1px solid #26384e;
+            background: #0e1d30;
+            color: white;
+            padding: 11px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background: #142943;
+        }
+
+        .search-box {
+            outline: none;
+            width: 220px;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(
+                135deg,
+                #102c49,
+                #101d35 55%,
+                #17183c
+            );
+            border: 1px solid #223a57;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 22px;
+        }
+
+        .hero h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #aab8ca;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .card {
+            background: #0c1a2b;
+            border: 1px solid #1e3045;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .card-label {
+            color: #8291a5;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .positive {
+            color: #29e39d;
+        }
+
+        .negative {
+            color: #ff6575;
+        }
+
+        /* GRID */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-title h3 {
+            font-size: 18px;
+        }
+
+        .muted {
+            color: #8190a5;
+            font-size: 12px;
+        }
+
+        /* MARKET */
+        .market-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .coin {
+            display: grid;
+            grid-template-columns: 40px 1fr auto auto;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            background: #0a1625;
+            border: 1px solid #182b40;
+            border-radius: 12px;
+        }
+
+        .coin img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+        }
+
+        .coin-name {
+            font-weight: 700;
+        }
+
+        .coin-symbol {
+            color: #718096;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .coin-price {
+            font-weight: 700;
+        }
+
+        .coin-change {
+            min-width: 70px;
+            text-align: right;
+        }
+
+        /* AI */
+        .ai-box {
+            background: linear-gradient(135deg, #111d3b, #0d2531);
+            border: 1px solid #2a3d61;
+        }
+
+        .signal {
+            font-size: 34px;
+            font-weight: 800;
+            margin: 12px 0;
+        }
+
+        .confidence {
+            height: 8px;
+            background: #1b2a3c;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 14px 0;
+        }
+
+        .confidence span {
+            display: block;
+            height: 100%;
+            width: 85%;
+            background: linear-gradient(90deg, #00e5ff, #635bff);
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 1px solid #1b2a3d;
+            font-size: 13px;
+        }
+
+        th {
+            color: #7f8da2;
+            font-weight: 500;
+        }
+
+        td {
+            color: #d9e0ea;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: #68788e;
+            font-size: 11px;
+            padding: 25px 0 10px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #1b2a3d;
+            }
+
+            .app {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 18px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">₿</div>
+
+            <div class="logo-text">
+                Crypto<span>Pulse</span>
+            </div>
+        </div>
+
+        <div class="nav-title">Dashboard</div>
+
+        <div class="nav-item active">
+            📊 Overview
+        </div>
+
+        <div class="nav-item">
+            📈 Markets
+        </div>
+
+        <div class="nav-item">
+            🤖 AI Analysis
+        </div>
+
+        <div class="nav-item">
+            ⭐ Watchlist
+        </div>
+
+        <div class="nav-title">Tools</div>
+
+        <div class="nav-item">
+            📁 Reports
+        </div>
+
+        <div class="nav-item">
+            ⚙️ Settings
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div class="page-title">
+                <h1>CryptoPulse AI</h1>
+                <p>AI-powered cryptocurrency market intelligence</p>
+            </div>
+
+            <div class="actions">
+
+                <input
+                    id="searchInput"
+                    class="search-box"
+                    type="text"
+                    placeholder="Search cryptocurrency..."
+                >
+
+                <button onclick="loadData()">
+                    🔄 Refresh
+                </button>
+
+                <button onclick="downloadCSV()">
+                    📄 CSV
+                </button>
+
+                <button onclick="downloadExcel()">
+                    📊 Excel
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- HERO -->
+        <section class="hero">
+
+            <h2>Welcome to CryptoPulse AI 🚀</h2>
+
+            <p>
+                Monitor cryptocurrency markets, analyze price movements,
+                view historical trends and explore AI-powered market signals
+                in one intelligent dashboard.
+            </p>
+
+        </section>
+
+
+        <!-- STATS -->
+        <section class="stats">
+
+            <div class="card">
+
+                <div class="card-label">
+                    Global Market Cap
+                </div>
+
+                <div class="card-value" id="mcap">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    24h Volume
+                </div>
+
+                <div class="card-value" id="volume">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    Market Trend
+                </div>
+
+                <div class="card-value" id="trend">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    AI Confidence
+                </div>
+
+                <div class="card-value" id="confidence">
+                    —
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MARKET + AI -->
+        <section class="grid-2">
+
+            <!-- TOP MARKETS -->
+            <div class="card">
+
+                <div class="section-title">
+
+                    <h3>Top Markets</h3>
+
+                    <span class="muted">
+                        Live data
+                    </span>
+
+                </div>
+
+                <div id="marketList" class="market-list">
+                    Loading...
+                </div>
+
+            </div>
+
+
+            <!-- AI SIGNAL -->
+            <div class="card ai-box">
+
+                <div class="section-title">
+
+                    <h3>AI Market Signal</h3>
+
+                    <span class="muted">
+                        CryptoPulse AI
+                    </span>
+
+                </div>
+
+                <div id="signalCoin" class="muted">
+                    Bitcoin
+                </div>
+
+                <div id="signal" class="signal">
+                    BUY
+                </div>
+
+                <div class="muted">
+                    AI Confidence
+                </div>
+
+                <div class="confidence">
+                    <span id="confidenceBar"></span>
+                </div>
+
+                <div id="signalText" class="muted">
+                    Market analysis generated from current market movement.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHART -->
+        <section class="card" style="margin-bottom:20px;">
+
+            <div class="section-title">
+
+                <h3>Bitcoin Price History</h3>
+
+                <span class="muted">
+                    Last 7 days
+                </span>
+
+            </div>
+
+            <div style="height:320px;">
+                <canvas id="priceChart"></canvas>
+            </div>
+
+        </section>
+
+
+        <!-- MARKET TABLE -->
+        <section class="card">
+
+            <div class="section-title">
+
+                <h3>Market Overview</h3>
+
+                <span class="muted">
+                    Top cryptocurrencies
+                </span>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Rank</th>
+                            <th>Coin</th>
+                            <th>Price</th>
+                            <th>Market Cap</th>
+                            <th>24h Change</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="marketTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <div class="footer">
+            CryptoPulse AI • Cryptocurrency Market Intelligence Dashboard
+            <br>
+            ⚠️ For educational and informational purposes only. Not financial advice.
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+let marketData = [];
+let chart = null;
+
+
+/* MONEY FORMAT */
+
+function money(value) {
+
+    const n = Number(value);
+
+    if (!Number.isFinite(n)) {
+        return "$0.00";
+    }
+
+    return "$" + n.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: n < 10 ? 4 : 2
+    });
+}
+
+
+/* COMPACT NUMBER */
+
+function compact(value) {
+
+    const n = Number(value);
+
+    if (!Number.isFinite(n)) {
+        return "$0";
+    }
+
+    if (n >= 1e12) {
+        return "$" + (n / 1e12).toFixed(2) + "T";
+    }
+
+    if (n >= 1e9) {
+        return "$" + (n / 1e9).toFixed(2) + "B";
+    }
+
+    if (n >= 1e6) {
+        return "$" + (n / 1e6).toFixed(2) + "M";
+    }
+
+    if (n >= 1e3) {
+        return "$" + (n / 1e3).toFixed(2) + "K";
+    }
+
+    return "$" + n.toFixed(2);
+}
+
+
+/* CHANGE FORMAT */
+
+function changeHTML(value) {
+
+    const n = Number(value);
+
+    if (!Number.isFinite(n)) {
+        return '<span class="muted">0.00%</span>';
+    }
+
+    const cls = n >= 0 ? "positive" : "negative";
+
+    const sign = n >= 0 ? "+" : "";
+
+    return `
+        <span class="${cls}">
+            ${sign}${n.toFixed(2)}%
+        </span>
+    `;
+}
+
+
+/* LOAD MARKET DATA */
+
+async function loadData() {
+
+    try {
+
+        const response = await fetch(
+            "/api/markets?time=" + Date.now(),
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Market API error");
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+            throw new Error("Invalid market data");
+        }
+
+        marketData = data;
+
+        render();
+
+        await loadHistory("bitcoin");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        document.getElementById("marketList").innerHTML =
+            `<div class="muted">
+                Unable to load market data.
+            </div>`;
+
+    }
+
+}
+
+
+/* RENDER DASHBOARD */
+
+function render() {
+
+    if (!marketData.length) {
+        return;
+    }
+
+
+    /* MARKET CAP */
+
+    const totalMarketCap = marketData.reduce(
+        (sum, coin) =>
+            sum + Number(coin.market_cap || 0),
+        0
+    );
+
+
+    /* VOLUME */
+
+    const totalVolume = marketData.reduce(
+        (sum, coin) =>
+            sum + Number(coin.total_volume || 0),
+        0
+    );
+
+
+    document.getElementById("mcap").textContent =
+        compact(totalMarketCap);
+
+
+    document.getElementById("volume").textContent =
+        compact(totalVolume);
+
+
+    /* TREND */
+
+    const changes = marketData
+        .map(c => Number(c.price_change_percentage_24h))
+        .filter(Number.isFinite);
+
+
+    const averageChange =
+        changes.length
+            ? changes.reduce((a, b) => a + b, 0) / changes.length
+            : 0;
+
+
+    const trend =
+        averageChange >= 0
+            ? "Bullish"
+            : "Bearish";
+
+
+    document.getElementById("trend").textContent =
+        trend;
+
+
+    /* AI CONFIDENCE */
+
+    const confidence =
+        Math.min(
+            95,
+            Math.max(
+                55,
+                Math.round(70 + Math.abs(averageChange) * 5)
+            )
+        );
+
+
+    document.getElementById("confidence").textContent =
+        confidence + "%";
+
+
+    document.getElementById("confidenceBar").style.width =
+        confidence + "%";
+
+
+    document.getElementById("signal").textContent =
+        trend === "Bullish"
+            ? "BUY"
+            : "SELL";
+
+
+    document.getElementById("signal").className =
+        "signal " +
+        (
+            trend === "Bullish"
+                ? "positive"
+                : "negative"
+        );
+
+
+    document.getElementById("signalText").textContent =
+        trend === "Bullish"
+            ? "Market momentum is currently positive."
+            : "Market momentum is currently negative.";
+
+
+    /* TOP MARKETS */
+
+    const list =
+        document.getElementById("marketList");
+
+
+    list.innerHTML =
+        marketData
+            .slice(0, 8)
+            .map(coin => {
+
+                const change =
+                    Number(
+                        coin.price_change_percentage_24h || 0
+                    );
+
+                return `
+
+                    <div class="coin">
+
+                        <img
+                            src="${coin.image || ""}"
+                            alt="${coin.name || "Coin"}"
+                        >
+
+                        <div>
+
+                            <div class="coin-name">
+                                ${coin.name || "Unknown"}
+                            </div>
+
+                            <div class="coin-symbol">
+                                ${coin.symbol || ""}
+                            </div>
+
+                        </div>
+
+                        <div class="coin-price">
+                            ${money(coin.current_price)}
+                        </div>
+
+                        <div class="coin-change">
+                            ${changeHTML(change)}
+                        </div>
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
+
+
+    /* TABLE */
+
+    const table =
+        document.getElementById("marketTable");
+
+
+    table.innerHTML =
+        marketData
+            .slice(0, 20)
+            .map((coin, index) => {
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${coin.market_cap_rank || index + 1}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${coin.name || "Unknown"}
+                            </strong>
+                            <span class="muted">
+                                ${(
+                                    coin.symbol || ""
+                                ).toUpperCase()}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${money(coin.current_price)}
+                        </td>
+
+                        <td>
+                            ${compact(coin.market_cap)}
+                        </td>
+
+                        <td>
+                            ${changeHTML(
+                                coin.price_change_percentage_24h
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            })
+            .join("");
+
+}
+
+
+/* HISTORY CHART */
+
+async function loadHistory(coinId) {
+
+    try {
+
+        const response = await fetch(
+            `/api/history/${coinId}?days=7&time=${Date.now()}`,
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("History API error");
+        }
+
+        const data = await response.json();
+
+        if (!data.prices || !data.prices.length) {
+            return;
+        }
+
+
+        const labels =
+            data.prices.map(item =>
+                new Date(item[0]).toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "numeric"
+                    }
+                )
+            );
+
+
+        const prices =
+            data.prices.map(item =>
+                Number(item[1])
+            );
+
+
+        const ctx =
+            document
+                .getElementById("priceChart")
+                .getContext("2d");
+
+
+        if (chart) {
+            chart.destroy();
+        }
+
+
+        chart = new Chart(ctx, {
+
+            type: "line",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label: "Bitcoin Price",
+
+                        data: prices,
+
+                        borderColor: "#00e5ff",
+
+                        backgroundColor:
+                            "rgba(0,229,255,0.10)",
+
+                        borderWidth: 2,
+
+                        fill: true,
+
+                        tension: 0.35,
+
+                        pointRadius: 0
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+                            color: "#718096"
+                        },
+
+                        grid: {
+                            color: "rgba(255,255,255,0.05)"
+                        }
+
+                    },
+
+                    y: {
+
+                        ticks: {
+
+                            color: "#718096",
+
+                            callback: function(value) {
+                                return money(value);
+                            }
+
+                        },
+
+                        grid: {
+                            color: "rgba(255,255,255,0.05)"
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "History chart error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* CSV DOWNLOAD */
+
+function downloadCSV() {
+
+    window.location.href =
+        "/api/export/markets";
+
+}
+
+
+/* EXCEL DOWNLOAD */
+
+function downloadExcel() {
+
+    window.location.href =
+        "/api/export/excel";
+
+}
+
+
+/* SEARCH */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            const query =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+            const filtered =
+                marketData.filter(coin =>
+                    String(coin.name || "")
+                        .toLowerCase()
+                        .includes(query)
+                    ||
+                    String(coin.symbol || "")
+                        .toLowerCase()
+                        .includes(query)
+                );
+
+
+            const list =
+                document.getElementById("marketList");
+
+
+            if (!filtered.length) {
+
+                list.innerHTML =
+                    `<div class="muted">
+                        No cryptocurrency found.
+                    </div>`;
+
+                return;
+
+            }
+
+
+            list.innerHTML =
+                filtered
+                    .slice(0, 8)
+                    .map(coin => {
+
+                        return `
+
+                            <div class="coin">
+
+                                <img
+                                    src="${coin.image || ""}"
+                                    alt="${coin.name || "Coin"}"
+                                >
+
+                                <div>
+
+                                    <div class="coin-name">
+                                        ${coin.name || "Unknown"}
+                                    </div>
+
+                                    <div class="coin-symbol">
+                                        ${coin.symbol || ""}
+                                    </div>
+
+                                </div>
+
+                                <div class="coin-price">
+                                    ${money(
+                                        coin.current_price
+                                    )}
+                                </div>
+
+                                <div class="coin-change">
+                                    ${changeHTML(
+                                        coin.price_change_percentage_24h
+                                    )}
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    })
+                    .join("");
+
+        }
+    );
+
+
+/* START */
+
+loadData();
+
+
+/* AUTO REFRESH */
+
+setInterval(
+    loadData,
+    60000
+);
+
+</script>
+
+</body>
+</html>
